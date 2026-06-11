@@ -18,7 +18,42 @@ class ProfileController extends Controller
     {
         return view('profile.edit', [
             'user' => $request->user(),
+            'addresses' => $request->user()->addresses()->orderBy('is_default', 'desc')->get(),
         ]);
+    }
+
+    public function storeAddress(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'recipient_name' => 'required|string|max:255',
+            'phone' => 'required|string|max:15',
+            'full_address' => 'required|string',
+            'city' => 'required|string',
+            'province' => 'required|string',
+            'postal_code' => 'required|string|max:10',
+            'is_default' => 'nullable|boolean',
+        ]);
+
+        $user = Auth::user();
+        $isDefault = $request->has('is_default'); // bernilai true jika checkbox dicentang
+
+        // Logika: Jika alamat ini dijadikan default, ubah alamat lain milik user menjadi false
+        if ($isDefault) {
+            Address::where('user_id', $user->id)->update(['is_default' => false]);
+        }
+
+        Address::create([
+            'user_id' => $user->id,
+            'recipient_name' => $request->recipient_name,
+            'phone' => $request->phone,
+            'full_address' => $request->full_address,
+            'city' => $request->city,
+            'province' => $request->province,
+            'postal_code' => $request->postal_code,
+            'is_default' => $isDefault,
+        ]);
+
+        return redirect()->back()->with('success', 'Alamat baru berhasil ditambahkan!');
     }
 
     /**

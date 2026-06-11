@@ -12,9 +12,33 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        $table->id();
+
+        $table->foreignId('order_id')
+            ->constrained()
+            ->cascadeOnDelete();
+
+        $table->string('midtrans_order_id')->nullable();
+
+        $table->string('snap_token')->nullable();
+
+        $table->string('payment_type')->nullable();
+
+        $table->decimal('amount', 12, 2);
+
+        $table->enum('status', [
+            'pending',
+            'paid',
+            'failed',
+            'expired'
+        ])->default('pending');
+
+        $table->json('midtrans_response')->nullable();
+
+        $table->timestamp('paid_at')->nullable();
+
+        $table->timestamps();
+    });
     }
 
     /**

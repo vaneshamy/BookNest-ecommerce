@@ -48,5 +48,20 @@
                 {{ __('Register') }}
             </x-primary-button>
         </div>
+
+        <div class="mb-3">
+            <label for="phone" class="form-label">Nomor Handphone</label>
+            <input type="text" 
+                class="form-control @error('phone') is-invalid @enderror" 
+                id="phone" 
+                name="phone" value="{{ old('phone') }}" 
+                required>
+            
+            @error('phone')
+                <div class="invalid-feedback">
+                    {{ $message }}
+                </div>
+            @enderror
+        </div>
     </form>
 </x-guest-layout>

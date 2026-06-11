@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-            Schema::create('cart_items', function (Blueprint $table) {
+            Schema::create('order_items', function (Blueprint $table) {
         $table->id();
 
-        $table->foreignId('user_id')
+        $table->foreignId('order_id')
             ->constrained()
             ->cascadeOnDelete();
 
@@ -22,17 +22,23 @@ return new class extends Migration
             ->constrained()
             ->cascadeOnDelete();
 
+        $table->string('book_title');
+
+        $table->decimal('price', 12, 2);
+
         $table->integer('quantity');
+
+        $table->decimal('subtotal', 12, 2);
 
         $table->timestamps();
     });
-        }
+    }
 
-        /**
-         * Reverse the migrations.
-         */
-        public function down(): void
-        {
-            Schema::dropIfExists('carts');
-        }
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('order_items');
+    }
 };
